@@ -85,7 +85,7 @@ def format_response(food_items):
         total_sodium += item['Sodium']
         
     # Add totals row
-    response += "| Total | | | " + str(total_calories) + " | " + str(total_carbs) + " | " + str(total_protein) + " | " + str(total_fat) + " | " + str(total_fiber) + " | " + str(total_sodium) + " |\n"
+    response += f"| **Total** | | | **{total_calories}** | **{total_carbs}** | **{total_protein}** | **{total_fat}** | **{total_fiber}** | **{total_sodium}** |\n"
     
     return response
 
@@ -94,4 +94,5 @@ def format_response(food_items):
 if submit:
     image_data=input_image_setup(uploaded_file)
     response=get_gemini_repsonse(input_prompt,image_data,input)
+    st.markdown(format_response([]), unsafe_allow_html=True)
     st.write(response)
