@@ -35,9 +35,9 @@ def input_image_setup(uploaded_file):
     
 ##initialize our streamlit app
 
-st.set_page_config(page_title="Intelligent Food Calories Calculator")
+st.set_page_config(page_title="NouriScan", page_icon="🍏")
 
-st.header("Intelligent Food Calories Calculator")
+st.header("NouriScan")
 input=st.text_input("Input Prompt: ",key="input")
 uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
 image=""   
@@ -46,44 +46,30 @@ if uploaded_file is not None:
     st.image(image, caption="Uploaded Image.", use_column_width=True)
 
 
-submit=st.button("Tell me the total calories")
+submit=st.button("Tell me the nutritional information")
 
-input_prompt="""
+input_prompt = """
 You are an expert nutritionist tasked with analyzing food items from the image to calculate their nutritional information. Please provide the following details for each food item:
 
-1. Name of the food item
-2. Quantity or portion size
-3. Calories
-4. Carbohydrates (in grams)
-5. Protein (in grams)
-6. Fat (in grams)
-7. Fiber (in grams)
-8. Sodium (in milligrams)
-9. Any other relevant nutritional information
+| # | Food Item        | Quantity          | Calories | Carbohydrates (g) | Protein (g) | Fat (g) | Fiber (g) | Sodium (mg) | Other Information                 |
+|---|------------------|-------------------|----------|--------------------|-------------|---------|-----------|-------------|----------------------------------|
+| 1 | [Food Item 1]    | [Quantity 1]      | [Cal 1]  | [Carb 1]           | [Protein 1] | [Fat 1] | [Fiber 1] | [Sodium 1]  | [Other Info 1]                   |
+| 2 | [Food Item 2]    | [Quantity 2]      | [Cal 2]  | [Carb 2]           | [Protein 2] | [Fat 2] | [Fiber 2] | [Sodium 2]  | [Other Info 2]                   |
+|   |                  |                   |          |                    |             |         |           |             |                                  |
 
-Example:
-- Item 1:
-    - Name: Apple
-    - Quantity: 1 medium
-    - Calories: 95
-    - Carbohydrates: 25
-    - Protein: 0.5
-    - Fat: 0.3
-    - Fiber: 4.4
-    - Sodium: 0
-    - Other: Rich in vitamin C
-
-- Item 2:
-    - Name: Chicken Breast
-    - Quantity: 100 grams
-    - Calories: 165
-    - Carbohydrates: 0
-    - Protein: 31
-    - Fat: 3.6
-    - Fiber: 0
-    - Sodium: 74
-    - Other: High in protein, low in fat
 """
+
+response_header = """
+## Nutritional Information for Food Items
+"""
+
+def format_response(food_items):
+    response = response_header
+    response += "| # | Food Item        | Quantity          | Calories | Carbohydrates (g) | Protein (g) | Fat (g) | Fiber (g) | Sodium (mg) | Other Information                 |\n"
+    response += "|---|------------------|-------------------|----------|--------------------|-------------|---------|-----------|-------------|----------------------------------|\n"
+    for idx, item in enumerate(food_items, 1):
+        response += f"| {idx} | {item['Name']} | {item['Quantity']} | {item['Calories']} | {item['Carbohydrates']} | {item['Protein']} | {item['Fat']} | {item['Fiber']} | {item['Sodium']} | {item.get('Other', '')} |\n"
+    return response
 
 ## If submit button is clicked
 
