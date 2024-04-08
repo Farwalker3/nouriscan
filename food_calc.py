@@ -54,7 +54,6 @@ You are an expert nutritionist tasked with analyzing food items from the image t
 |---|------------------|-------------------|----------|--------------------|-------------|---------|-----------|-------------|
 | 1 | [Food Item 1]    | [Quantity 1]      | [Cal 1]  | [Carb 1]           | [Protein 1] | [Fat 1] | [Fiber 1] | [Sodium 1]  |
 | 2 | [Food Item 2]    | [Quantity 2]      | [Cal 2]  | [Carb 2]           | [Protein 2] | [Fat 2] | [Fiber 2] | [Sodium 2]  |
-|   |                  |                   |          |                    |             |         |           |             |
 | **Total** | | | | | | | | |
 """
 
@@ -66,56 +65,9 @@ def format_response(food_items):
     response = response_header
     response += "| # | Food Item        | Quantity          | Calories | Carbohydrates (g) | Protein (g) | Fat (g) | Fiber (g) | Sodium (mg) |\n"
     response += "|---|------------------|-------------------|----------|--------------------|-------------|---------|-----------|-------------|\n"
-
-    total_calories = 0
-    total_carbs = 0
-    total_protein = 0
-    total_fat = 0
-    total_fiber = 0
-    total_sodium = 0
-
-    for idx, item in enumerate(food_items, 1):
-        response += f"| {idx} | {item['Name']} | {item['Quantity']} | {item['Calories']} | {item['Carbohydrates']} | {item['Protein']} | {item['Fat']} | {item['Fiber']} | {item['Sodium']} |\n"
-        total_calories += item['Calories']
-        total_carbs += item['Carbohydrates']
-        total_protein += item['Protein']
-        total_fat += item['Fat']
-        total_fiber += item['Fiber']
-        total_sodium += item['Sodium']
-
-    # Add totals row
-    response += f"| **Total** | | | **{total_calories}** | **{total_carbs}** | **{total_protein}** | **{total_fat}** | **{total_fiber}** | **{total_sodium}** |\n"
-
     return response
-
-## If submit button is clicked
 
 if submit:
     image_data = input_image_setup(uploaded_file)
-    response_text = get_gemini_repsonse(input_text, image_data, input_prompt)
-    food_items = []
-    response_lines = response_text.split('\n')
-    start_processing = False
-    
-    for line in response_lines:
-        if start_processing:
-            # Skip empty lines and the subsequent response header
-            if line.strip() and not line.startswith("#"):
-                columns = [col.strip() for col in line.split("|")]
-                if len(columns) == 9:
-                    food_item = {
-                        "Name": columns[1],
-                        "Quantity": columns[2],
-                        "Calories": int(columns[3].split()[0]),
-                        "Carbohydrates": int(columns[4].split()[0]),
-                        "Protein": int(columns[5].split()[0]),
-                        "Fat": int(columns[6].split()[0]),
-                        "Fiber": int(columns[7].split()[0]),
-                        "Sodium": int(columns[8].split()[0])
-                    }
-                    food_items.append(food_item)
-        elif line.strip() == "## Nutritional Information for Food Items":
-            start_processing = True
-    
-    st.markdown(format_response(food_items), unsafe_allow_html=True)
-    st.write(response_text)
+    response = get_gemini_repsonse(input_prompt, image_data, input_text)
+    st.write(response)
