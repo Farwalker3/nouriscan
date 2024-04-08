@@ -89,26 +89,24 @@ if submit:
     response_text = get_gemini_repsonse(input_text, image_data, input_prompt)
     food_items = []
     response_lines = response_text.split('\n')
+    # Once all food items are extracted from the response, you can format the response and display it
     for line in response_lines:
-        # Here, you would need to parse each line of the response to extract the food items and their nutritional information
-        # Once parsed, append the food items to the food_items list
-        # You may need to split each line by the delimiter (e.g., '|') and extract the relevant information
-        # For example:
+        # Skip header and empty lines
         if line.strip() and not line.startswith("#"):
             columns = [col.strip() for col in line.split("|")]
             if len(columns) == 9:
                 food_item = {
                     "Name": columns[1],
                     "Quantity": columns[2],
-                    "Calories": columns[3],
-                    "Carbohydrates": columns[4],
-                    "Protein": columns[5],
-                    "Fat": columns[6],
-                    "Fiber": columns[7],
-                    "Sodium": columns[8]
+                    "Calories": int(columns[3].split()[0]),
+                    "Carbohydrates": int(columns[4].split()[0]),
+                    "Protein": int(columns[5].split()[0]),
+                    "Fat": int(columns[6].split()[0]),
+                    "Fiber": int(columns[7].split()[0]),
+                    "Sodium": int(columns[8].split()[0])
                 }
                 food_items.append(food_item)
-        
+                
     # Once all food items are extracted from the response, you can format the response and display it
     st.markdown(format_response(food_items), unsafe_allow_html=True)
     st.write(response_text)
