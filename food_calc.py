@@ -51,11 +51,11 @@ submit=st.button("Tell me the nutritional information")
 input_prompt = """
 You are an expert nutritionist tasked with analyzing food items from the image to calculate their nutritional information. Please provide the following details for each food item:
 
-| # | Food Item        | Quantity          | Calories | Carbohydrates (g) | Protein (g) | Fat (g) | Fiber (g) | Sodium (mg) | Other Information                 |
-|---|------------------|-------------------|----------|--------------------|-------------|---------|-----------|-------------|----------------------------------|
-| 1 | [Food Item 1]    | [Quantity 1]      | [Cal 1]  | [Carb 1]           | [Protein 1] | [Fat 1] | [Fiber 1] | [Sodium 1]  | [Other Info 1]                   |
-| 2 | [Food Item 2]    | [Quantity 2]      | [Cal 2]  | [Carb 2]           | [Protein 2] | [Fat 2] | [Fiber 2] | [Sodium 2]  | [Other Info 2]                   |
-|   |                  |                   |          |                    |             |         |           |             |                                  |
+| # | Food Item        | Quantity          | Calories | Carbohydrates (g) | Protein (g) | Fat (g) | Fiber (g) | Sodium (mg) |
+|---|------------------|-------------------|----------|--------------------|-------------|---------|-----------|-------------|
+| 1 | [Food Item 1]    | [Quantity 1]      | [Cal 1]  | [Carb 1]           | [Protein 1] | [Fat 1] | [Fiber 1] | [Sodium 1]  |
+| 2 | [Food Item 2]    | [Quantity 2]      | [Cal 2]  | [Carb 2]           | [Protein 2] | [Fat 2] | [Fiber 2] | [Sodium 2]  |
+|   |                  |                   |          |                    |             |         |           |             |
 
 """
 
@@ -65,10 +65,28 @@ response_header = """
 
 def format_response(food_items):
     response = response_header
-    response += "| # | Food Item        | Quantity          | Calories | Carbohydrates (g) | Protein (g) | Fat (g) | Fiber (g) | Sodium (mg) | Other Information                 |\n"
-    response += "|---|------------------|-------------------|----------|--------------------|-------------|---------|-----------|-------------|----------------------------------|\n"
+    response += "| # | Food Item        | Quantity          | Calories | Carbohydrates (g) | Protein (g) | Fat (g) | Fiber (g) | Sodium (mg) |\n"
+    response += "|---|------------------|-------------------|----------|--------------------|-------------|---------|-----------|-------------|\n"
+    
+    total_calories = 0
+    total_carbs = 0
+    total_protein = 0
+    total_fat = 0
+    total_fiber = 0
+    total_sodium = 0
+    
     for idx, item in enumerate(food_items, 1):
-        response += f"| {idx} | {item['Name']} | {item['Quantity']} | {item['Calories']} | {item['Carbohydrates']} | {item['Protein']} | {item['Fat']} | {item['Fiber']} | {item['Sodium']} | {item.get('Other', '')} |\n"
+        response += f"| {idx} | {item['Name']} | {item['Quantity']} | {item['Calories']} | {item['Carbohydrates']} | {item['Protein']} | {item['Fat']} | {item['Fiber']} | {item['Sodium']} |\n"
+        total_calories += item['Calories']
+        total_carbs += item['Carbohydrates']
+        total_protein += item['Protein']
+        total_fat += item['Fat']
+        total_fiber += item['Fiber']
+        total_sodium += item['Sodium']
+        
+    # Add totals row
+    response += "| Total | | | " + str(total_calories) + " | " + str(total_carbs) + " | " + str(total_protein) + " | " + str(total_fat) + " | " + str(total_fiber) + " | " + str(total_sodium) + " |\n"
+    
     return response
 
 ## If submit button is clicked
@@ -76,5 +94,4 @@ def format_response(food_items):
 if submit:
     image_data=input_image_setup(uploaded_file)
     response=get_gemini_repsonse(input_prompt,image_data,input)
-    st.subheader("The Response is")
     st.write(response)
