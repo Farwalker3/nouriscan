@@ -12,9 +12,9 @@ genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 ## Function to load Google Gemini Pro Vision API And get response
 
-def get_gemini_repsonse(input,image,prompt):
-    model=genai.GenerativeModel('gemini-pro-vision')
-    response=model.generate_content([input,image[0],prompt])
+def get_gemini_repsonse(input, image, prompt):
+    model = genai.GenerativeModel('gemini-pro-vision')
+    response = model.generate_content([input, image[0], prompt])
     return response.text
 
 def input_image_setup(uploaded_file):
@@ -32,21 +32,20 @@ def input_image_setup(uploaded_file):
         return image_parts
     else:
         raise FileNotFoundError("No file uploaded")
-    
+
 ##initialize our streamlit app
 
 st.set_page_config(page_title="NouriScan", page_icon="🍏")
 
 st.header("NouriScan")
-input=st.text_input("Input Prompt: ",key="input")
+input_text = st.text_input("Input Prompt: ", key="input")
 uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
-image=""   
+image = ""
 if uploaded_file is not None:
     image = Image.open(uploaded_file)
     st.image(image, caption="Uploaded Image.", use_column_width=True)
 
-
-submit=st.button("Tell me the nutritional information")
+submit = st.button("Tell me the nutritional information")
 
 input_prompt = """
 You are an expert nutritionist tasked with analyzing food items from the image to calculate their nutritional information. Please provide the following details for each food item:
@@ -67,7 +66,7 @@ def format_response(food_items):
     response = response_header
     response += "| # | Food Item        | Quantity          | Calories | Carbohydrates (g) | Protein (g) | Fat (g) | Fiber (g) | Sodium (mg) |\n"
     response += "|---|------------------|-------------------|----------|--------------------|-------------|---------|-----------|-------------|\n"
-    
+
     for idx, item in enumerate(food_items, 1):
         response += f"| {idx} | {item['Name']} | {item['Quantity']} | {item['Calories']} | {item['Carbohydrates']} | {item['Protein']} | {item['Fat']} | {item['Fiber']} | {item['Sodium']} |\n"
 
@@ -86,7 +85,8 @@ def format_response(food_items):
 ## If submit button is clicked
 
 if submit:
-    image_data=input_image_setup(uploaded_file)
-    response=get_gemini_repsonse(input_prompt,image_data,input)
-    st.markdown(format_response([]), unsafe_allow_html=True)
-    st.write(response)
+    image_data = input_image_setup(uploaded_file)
+    response_text = get_gemini_repsonse(input_text, image_data, input_prompt)
+    food_items = []
+    response_lines = response_text.split('\n')
+    for line in response
