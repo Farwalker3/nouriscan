@@ -67,24 +67,8 @@ def format_response(food_items):
     response += "| # | Food Item        | Quantity          | Calories | Carbohydrates (g) | Protein (g) | Fat (g) | Fiber (g) | Sodium (mg) |\n"
     response += "|---|------------------|-------------------|----------|--------------------|-------------|---------|-----------|-------------|\n"
 
-    total_calories = 0
-    total_carbs = 0
-    total_protein = 0
-    total_fat = 0
-    total_fiber = 0
-    total_sodium = 0
-
     for idx, item in enumerate(food_items, 1):
         response += f"| {idx} | {item['Name']} | {item['Quantity']} | {item['Calories']} | {item['Carbohydrates']} | {item['Protein']} | {item['Fat']} | {item['Fiber']} | {item['Sodium']} |\n"
-        total_calories += item['Calories']
-        total_carbs += item['Carbohydrates']
-        total_protein += item['Protein']
-        total_fat += item['Fat']
-        total_fiber += item['Fiber']
-        total_sodium += item['Sodium']
-
-    # Add totals row
-    response += f"| **Total** | | | **{total_calories}** | **{total_carbs}** | **{total_protein}** | **{total_fat}** | **{total_fiber}** | **{total_sodium}** |\n"
 
     return response
 
