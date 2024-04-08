@@ -49,16 +49,40 @@ if uploaded_file is not None:
 submit=st.button("Tell me the total calories")
 
 input_prompt="""
-You are an expert in nutritionist where you need to see the food items from the image
-               and calculate the total calories, also provide the details of every food items with calories intake
-               is below format
+You are an expert nutritionist tasked with analyzing food items from the image to calculate their nutritional information. Please provide the following details for each food item:
 
-               1. Item 1 - no of calories
-               2. Item 2 - no of calories
-               ----
-               ----
+1. Name of the food item
+2. Quantity or portion size
+3. Calories
+4. Carbohydrates (in grams)
+5. Protein (in grams)
+6. Fat (in grams)
+7. Fiber (in grams)
+8. Sodium (in milligrams)
+9. Any other relevant nutritional information
 
+Example:
+- Item 1:
+    - Name: Apple
+    - Quantity: 1 medium
+    - Calories: 95
+    - Carbohydrates: 25
+    - Protein: 0.5
+    - Fat: 0.3
+    - Fiber: 4.4
+    - Sodium: 0
+    - Other: Rich in vitamin C
 
+- Item 2:
+    - Name: Chicken Breast
+    - Quantity: 100 grams
+    - Calories: 165
+    - Carbohydrates: 0
+    - Protein: 31
+    - Fat: 3.6
+    - Fiber: 0
+    - Sodium: 74
+    - Other: High in protein, low in fat
 """
 
 ## If submit button is clicked
