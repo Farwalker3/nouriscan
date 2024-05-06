@@ -72,6 +72,8 @@ with col1:
   camera_option = st.checkbox("Use Camera")
 
   if camera_option:
+      import streamlit as st
+    
       # Prompt the user to allow camera and video autoplay permissions using JavaScript
       permission_script = """
       <script>
@@ -82,14 +84,33 @@ with col1:
           } catch (error) {
             console.error("Error accessing camera:", error);
           }
+        }
+        
+        async function tryAutoplay() {
+          const videoElement = document.createElement('video');
           try {
-            await document.querySelector('video').play();
+            await videoElement.play();
             console.log("Video autoplay permissions granted");
           } catch (error) {
             console.error("Error autoplaying video:", error);
+            // Prompt the user to click a button to allow autoplay
+            const autoplayButton = document.createElement('button');
+            autoplayButton.textContent = 'Allow Autoplay';
+            autoplayButton.onclick = async () => {
+              try {
+                await videoElement.play();
+                console.log("Video autoplay permissions granted after button click");
+                autoplayButton.style.display = 'none'; // Hide the button after autoplay is allowed
+              } catch (error) {
+                console.error("Error autoplaying video after button click:", error);
+              }
+            };
+            document.body.appendChild(autoplayButton);
           }
         }
+      
         askForPermissions();
+        tryAutoplay();
       </script>
       """
     
@@ -101,7 +122,6 @@ with col1:
     
       if camera_image is not None:
           st.image(camera_image, caption="Captured Image", use_column_width=True)
-        
 
           if submit_button:
               image_data = input_image_setup(camera_image)
