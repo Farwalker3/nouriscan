@@ -72,10 +72,36 @@ with col1:
   camera_option = st.checkbox("Use Camera")
 
   if camera_option:
+      # Prompt the user to allow camera and video autoplay permissions using JavaScript
+      permission_script = """
+      <script>
+        async function askForPermissions() {
+          try {
+            await navigator.mediaDevices.getUserMedia({ video: true });
+            console.log("Camera permissions granted");
+          } catch (error) {
+            console.error("Error accessing camera:", error);
+          }
+          try {
+            await document.querySelector('video').play();
+            console.log("Video autoplay permissions granted");
+          } catch (error) {
+            console.error("Error autoplaying video:", error);
+          }
+        }
+        askForPermissions();
+      </script>
+      """
+    
+      # Display the prompt to the user
+      st.write(permission_script, unsafe_allow_html=True)
+    
+      # Now you can use st.camera_input() to capture images
       camera_image = st.camera_input("Take a picture")
-
+    
       if camera_image is not None:
-          submit_button = st.button("Analyze Picture")
+          st.image(camera_image, caption="Captured Image", use_column_width=True)
+        
 
           if submit_button:
               image_data = input_image_setup(camera_image)
