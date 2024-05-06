@@ -72,8 +72,6 @@ with col1:
   camera_option = st.checkbox("Use Camera")
 
   if camera_option:
-      import streamlit as st
-    
       # Prompt the user to allow camera and video autoplay permissions using JavaScript
       permission_script = """
       <script>
@@ -88,24 +86,30 @@ with col1:
         
         async function tryAutoplay() {
           const videoElement = document.createElement('video');
+          videoElement.setAttribute('playsinline', '');
+          videoElement.setAttribute('autoplay', '');
+          videoElement.setAttribute('muted', '');
+          videoElement.setAttribute('loop', '');
+      
           try {
             await videoElement.play();
             console.log("Video autoplay permissions granted");
           } catch (error) {
             console.error("Error autoplaying video:", error);
-            // Prompt the user to click a button to allow autoplay
-            const autoplayButton = document.createElement('button');
-            autoplayButton.textContent = 'Allow Autoplay';
-            autoplayButton.onclick = async () => {
+            // Directly inform the user to allow autoplay
+            const autoplayInfo = document.createElement('p');
+            autoplayInfo.textContent = 'To use the camera, please allow autoplay by clicking on this message.';
+            autoplayInfo.style.cursor = 'pointer';
+            autoplayInfo.onclick = async () => {
               try {
                 await videoElement.play();
-                console.log("Video autoplay permissions granted after button click");
-                autoplayButton.style.display = 'none'; // Hide the button after autoplay is allowed
+                autoplayInfo.style.display = 'none'; // Hide the message after autoplay is allowed
+                console.log("Video autoplay permissions granted after click");
               } catch (error) {
-                console.error("Error autoplaying video after button click:", error);
+                console.error("Error autoplaying video after click:", error);
               }
             };
-            document.body.appendChild(autoplayButton);
+            document.body.appendChild(autoplayInfo);
           }
         }
       
