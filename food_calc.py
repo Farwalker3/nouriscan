@@ -262,19 +262,19 @@ with col1:
                             quantity = nutrition_data[food_item][nutrient]["quantity"]
                             rounded_quantity = round(float(quantity))
                             total_calories += rounded_quantity  # Accumulate total calories
-                            row.append(Decimal(rounded_quantity))
+                            row.append(float(rounded_quantity))  # Convert Decimal to float
                         else:
                             row.append("N/A")
                     # Append the total for this nutrient to the end of the row
-                    row.append(total_calories)
+                    row.append(float(total_calories))  # Convert Decimal to float
                     table_data.append(row)
-
+                    
                 # Append a row for totals
                 total_row = ["Total"]
                 for food_item in detected_food_items:
                     total_calories = sum([row[i] if row[i] != "N/A" else 0 for row in table_data[1:]])  # Calculate total for each food item
-                    total_row.append(total_calories)
+                    total_row.append(float(total_calories))  # Convert Decimal to float
                 table_data.append(total_row)
-
+                
                 # Display the table
                 st.table(table_data)
