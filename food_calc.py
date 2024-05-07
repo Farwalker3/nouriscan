@@ -271,8 +271,8 @@ with col1:
                     
                 # Append a row for totals
                 total_row = ["Total"]
-                for food_item in detected_food_items:
-                    total_calories = sum([row[i] if row[i] != "N/A" else 0 for row in table_data[1:]])  # Calculate total for each food item
+                for i, food_item in enumerate(detected_food_items):
+                    total_calories = sum([float(row[i+1]) if row[i+1] != "N/A" else 0 for row in table_data[1:]])  # Calculate total for each food item
                     total_row.append(float(total_calories))  # Convert Decimal to float
                 table_data.append(total_row)
                 
