@@ -55,139 +55,35 @@ st.set_page_config(page_title="Intelligent Food Calories Calculator",layout="wid
 st.header("Intelligent Food Calories Calculator")
 col1, col2 = st.columns([1, 3])
 with col1:
-    # Add Additional Commands Drawer
-    add_commands_expander = st.expander("Add Additional Commands (Optional)")
+  # Add Additional Commands Drawer
+  add_commands_expander = st.expander("Add Additional Commands (Optional)")
 
-    with add_commands_expander:
-        st.subheader("Input Prompt:")
-        input_prompt = """
-        You are an expert in nutritionist where you need to list the food items/ingredients from the image in the below format:
+  with add_commands_expander:
+      st.subheader("Input Prompt:")
+      input_prompt = """
+      You are an expert in nutritionist where you need to list the food items/ingredients from the image in the below format:
 
-        [amount/quantity] Item 1, [amount/quantity] Item 2, ----, ----
-        """
+      [amount/quantity] Item 1, [amount/quantity] Item 2, ----, ----
+      """
 
-        input_text = st.text_input("Input Prompt: ", key="input")
+      input_text = st.text_input("Input Prompt: ", key="input")
 
-    uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
-    camera_option = st.checkbox("Use Camera")
+  uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+  camera_option = st.checkbox("Use Camera")
 
-    if camera_option:
-        camera_image = st.camera_input("Take a picture")
+  if camera_option:
+      camera_image = st.camera_input("Take a picture")
 
-        if camera_image is not None:
-            submit_button = st.button("Analyze Picture")
+      if camera_image is not None:
+          submit_button = st.button("Analyze Picture")
 
-            if submit_button:
-                image_data = input_image_setup(camera_image)
+          if submit_button:
+              image_data = input_image_setup(camera_image)
 
-                # Get response from genAI API
-                response = get_gemini_response(input_text, image_data, input_prompt)
-                detected_food_items = response.split(',')
-                with col2:
-                    st.subheader("Detected Food Items:")
-                    st.write(detected_food_items)
-
-                    st.subheader("Nutrition Information:")
-
-                    # Create a dictionary to hold the nutrition information for each food item
-                    nutrition_data = {}
-
-                    for food_item in detected_food_items:
-                        # Get nutrition information for each food item
-                        nutrition_info = get_nutrition_info(food_item)
-                        # Store the nutrition information in the dictionary
-                        nutrition_data[food_item] = nutrition_info['totalNutrients']
-
-                    # Create a table for the nutrition information
-                    table_data = []
-                    nutrients = set()
-                    for food_item, info in nutrition_data.items():
-                        for nutrient, data in info.items():
-                            nutrients.add(nutrient)
-                    nutrients = sorted(list(nutrients))
-
-                    # Create a header row
-                    header_row = ["Nutrient"]
-                    header_row.extend(detected_food_items)
-                    table_data.append(header_row)
-
-                    # Mapping of nutrient acronyms to their full names
-                    nutrient_mapping = {
-                        "CA": "Calcium",
-                        "CHOCDF": "Carbohydrates",
-                        "CHOCDF.net": "Net Carbs",
-                        "CHOLE": "Cholesterol",
-                        "ENERC_KCAL": "Calories",
-                        "FAMS": "Monounsaturated Fat",
-                        "FAPU": "Polyunsaturated Fat",
-                        "FASAT": "Saturated Fat",
-                        "FAT": "Total Fat",
-                        "FATRN": "Trans Fat",
-                        "FE": "Iron",
-                        "FIBTG": "Dietary Fiber",
-                        "FOLAC": "Folate",
-                        "FOLDFE": "Folate (DFE)",
-                        "FOLFD": "Folate (food)",
-                        "K": "Potassium",
-                        "MG": "Magnesium",
-                        "NA": "Sodium",
-                        "NIA": "Niacin (B3)",
-                        "P": "Phosphorus",
-                        "PROCNT": "Protein",
-                        "RIBF": "Riboflavin (B2)",
-                        "SUGAR": "Sugar",
-                        "SUGAR.added": "Added Sugar",
-                        "THIA": "Thiamin (B1)",
-                        "TOCPHA": "Vitamin E",
-                        "VITA_RAE": "Vitamin A",
-                        "VITB12": "Vitamin B12",
-                        "VITB6A": "Vitamin B6",
-                        "VITC": "Vitamin C",
-                        "VITD": "Vitamin D",
-                        "VITK1": "Vitamin K",
-                        "WATER": "Water",
-                        "ZN": "Zinc"
-                    }
-
-                    # Populate the table data
-                    for nutrient in nutrients:
-                        row = [nutrient_mapping.get(nutrient, nutrient)]
-                        total_calories = 0  # Initialize total calories for this nutrient
-                        for food_item in detected_food_items:
-                            if nutrient in nutrition_data.get(food_item, {}):
-                                quantity = nutrition_data[food_item][nutrient]["quantity"]
-                                rounded_quantity = round(float(quantity))
-                                total_calories += rounded_quantity  # Accumulate total calories
-                                row.append(Decimal(rounded_quantity))
-                            else:
-                                row.append("N/A")
-                        # Append the total for this nutrient to the end of the row
-                        row.append(total_calories)
-                        table_data.append(row)
-
-                    # Append a row for totals
-                    total_row = ["Total"]
-                    for food_item in detected_food_items:
-                        total_calories = sum([row[i] if row[i] != "N/A" else 0 for row in table_data[1:]])  # Calculate total for each food item
-                        total_row.append(total_calories)
-                    table_data.append(total_row)
-
-                    # Display the table
-                    st.table(table_data)
-
-    if uploaded_file is not None and not camera_option:
-        image = Image.open(uploaded_file)
-        st.image(image, caption="Uploaded Image.", use_column_width=True)
-
-        submit_button = st.button("Tell me the total calories")
-
-        if submit_button:
-            image_data = input_image_setup(uploaded_file)
-
-            # Get response from genAI API
-            response = get_gemini_response(input_text, image_data, input_prompt)
-            detected_food_items = response.split(',')
-            with col2:
+              # Get response from genAI API
+              response = get_gemini_response(input_text, image_data, input_prompt)
+              detected_food_items = response.split(',')
+              with col2:
                 st.subheader("Detected Food Items:")
                 st.write(detected_food_items)
 
@@ -256,25 +152,107 @@ with col1:
                 # Populate the table data
                 for nutrient in nutrients:
                     row = [nutrient_mapping.get(nutrient, nutrient)]
-                    total_calories = 0  # Initialize total calories for this nutrient
                     for food_item in detected_food_items:
                         if nutrient in nutrition_data.get(food_item, {}):
-                            quantity = nutrition_data[food_item][nutrient]["quantity"]
-                            rounded_quantity = round(float(quantity))
-                            total_calories += rounded_quantity  # Accumulate total calories
-                            row.append(float(rounded_quantity))  # Convert Decimal to float
+                          quantity = nutrition_data[food_item][nutrient]["quantity"]
+                          rounded_quantity = round(float(quantity))
+                          row.append(Decimal(rounded_quantity))
                         else:
                             row.append("N/A")
-                    # Append the total for this nutrient to the end of the row
-                    row.append(float(total_calories))  # Convert Decimal to float
                     table_data.append(row)
-                    
-                # Append a row for totals
-                total_row = ["Total"]
-                for i, food_item in enumerate(detected_food_items):
-                    total_calories = sum([float(row[i+1]) if row[i+1] != "N/A" else 0 for row in table_data[1:]])  # Calculate total for each food item
-                    total_row.append(float(total_calories))  # Convert Decimal to float
-                table_data.append(total_row)
-                
+
                 # Display the table
                 st.table(table_data)
+
+  if uploaded_file is not None and not camera_option:
+      image = Image.open(uploaded_file)
+      st.image(image, caption="Uploaded Image.", use_column_width=True)
+
+      submit_button = st.button("Tell me the total calories")
+
+      if submit_button:
+          image_data = input_image_setup(uploaded_file)
+
+          # Get response from genAI API
+          response = get_gemini_response(input_text, image_data, input_prompt)
+          detected_food_items = response.split(',')
+          with col2:
+            st.subheader("Detected Food Items:")
+            st.write(detected_food_items)
+
+            st.subheader("Nutrition Information:")
+
+            # Create a dictionary to hold the nutrition information for each food item
+            nutrition_data = {}
+
+            for food_item in detected_food_items:
+                # Get nutrition information for each food item
+                nutrition_info = get_nutrition_info(food_item)
+                # Store the nutrition information in the dictionary
+                nutrition_data[food_item] = nutrition_info['totalNutrients']
+
+            # Create a table for the nutrition information
+            table_data = []
+            nutrients = set()
+            for food_item, info in nutrition_data.items():
+                for nutrient, data in info.items():
+                    nutrients.add(nutrient)
+            nutrients = sorted(list(nutrients))
+
+            # Create a header row
+            header_row = ["Nutrient"]
+            header_row.extend(detected_food_items)
+            table_data.append(header_row)
+
+            # Mapping of nutrient acronyms to their full names
+            nutrient_mapping = {
+                "CA": "Calcium",
+                "CHOCDF": "Carbohydrates",
+                "CHOCDF.net": "Net Carbs",
+                "CHOLE": "Cholesterol",
+                "ENERC_KCAL": "Calories",
+                "FAMS": "Monounsaturated Fat",
+                "FAPU": "Polyunsaturated Fat",
+                "FASAT": "Saturated Fat",
+                "FAT": "Total Fat",
+                "FATRN": "Trans Fat",
+                "FE": "Iron",
+                "FIBTG": "Dietary Fiber",
+                "FOLAC": "Folate",
+                "FOLDFE": "Folate (DFE)",
+                "FOLFD": "Folate (food)",
+                "K": "Potassium",
+                "MG": "Magnesium",
+                "NA": "Sodium",
+                "NIA": "Niacin (B3)",
+                "P": "Phosphorus",
+                "PROCNT": "Protein",
+                "RIBF": "Riboflavin (B2)",
+                "SUGAR": "Sugar",
+                "SUGAR.added": "Added Sugar",
+                "THIA": "Thiamin (B1)",
+                "TOCPHA": "Vitamin E",
+                "VITA_RAE": "Vitamin A",
+                "VITB12": "Vitamin B12",
+                "VITB6A": "Vitamin B6",
+                "VITC": "Vitamin C",
+                "VITD": "Vitamin D",
+                "VITK1": "Vitamin K",
+                "WATER": "Water",
+                "ZN": "Zinc"
+            }
+
+            # Populate the table data
+            for nutrient in nutrients:
+                row = [nutrient_mapping.get(nutrient, nutrient)]
+                for food_item in detected_food_items:
+                    if nutrient in nutrition_data.get(food_item, {}):
+                      quantity = nutrition_data[food_item][nutrient]["quantity"]
+                      rounded_quantity = round(float(quantity))
+                      row.append(Decimal(rounded_quantity))
+                    else:
+                        row.append("N/A")
+                table_data.append(row)
+
+            # Display the table
+            st.table(table_data)
